@@ -58,25 +58,25 @@ extract_function = [
 prompt = f"please extract the important information from this json{text}, and teach the topics"
 messages = [{"role":"user","content":prompt}]
 
-response = client.chat.completions.create(
-    model = "gpt-3.5-turbo-0613",
-    messages=messages,
-    functions=extract_function,
-    function_call="auto"
-)
+# response = client.chat.completions.create(
+#     model = "gpt-3.5-turbo-0613",
+#     messages=messages,
+#     functions=extract_function,
+#     function_call="auto"
+# )
 
-print(response)
+# print(response)
 
 
 
 #extracting json output of function call👇
-choices = response.choices
+# choices = response.choices
 
-# Assuming there's at least one choice and it contains a function call
-if choices and choices[0].message and choices[0].message.function_call:
-    function_call = choices[0].message.function_call
+# # Assuming there's at least one choice and it contains a function call
+# if choices and choices[0].message and choices[0].message.function_call:
+#     function_call = choices[0].message.function_call
 
-    # Now you have the FunctionCall object
-    function_name = function_call.name
-    function_arguments = function_call.arguments
-    print(function_arguments)
+#     # Now you have the FunctionCall object
+#     function_name = function_call.name
+#     function_arguments = function_call.arguments
+#     print(function_arguments)
