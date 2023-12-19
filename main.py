@@ -3,6 +3,7 @@ import pytesseract
 from PIL import Image
 
 
+
 images = convert_from_path('olevel4048mathsyllabus.pdf')
 
 for i, image in enumerate(images):

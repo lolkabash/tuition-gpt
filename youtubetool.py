@@ -11,8 +11,11 @@ key=os.getenv("youtube_api_key")
 
 # Replace with your actual API key, channel IDs, and keywords
 
-channel_id_list = ['UCX6b17PVsYBQ0ip5gyeme-Q', 'UC_SvYP0k05UKiJ_2ndB02IA', 'UCEWpbFLzoYGPfuWUMFPSaoA']
-channel_name_list = ['CrashCourse', 'blackpenredpen', 'The Organic Chemistry Tutor']
+channel_id_list = ['UCX6b17PVsYBQ0ip5gyeme-Q', 'UCEWpbFLzoYGPfuWUMFPSaoA']
+channel_name_list = ['CrashCourse', 'The Organic Chemistry Tutor']
+KEYWORDS = ['Energy and Momentum Conservation Principle', 'system of objects', 'velocities', 'interaction', 'Momentum Conservation Principle', 'system undergoing recoil', '1D problems', 'bodies collide', 'elastic collision', 'super-elastic collision', 'inelastic collision', 'completely inelastic collision']  
+
+
 # keep_adding = True
 # while keep_adding:
 #     ans1=str(input('Input Username : ' )).split()
@@ -23,11 +26,9 @@ channel_name_list = ['CrashCourse', 'blackpenredpen', 'The Organic Chemistry Tut
 #     if resume == "n":
 #         keep_adding = False
 resource_dictionary = dict(zip(channel_name_list,channel_id_list))
-print(resource_dictionary)
+
 
 API_KEY = os.getenv("youtube_api_key")
-channel_id_list = ['UCX6b17PVsYBQ0ip5gyeme-Q', 'UC_SvYP0k05UKiJ_2ndB02IA', 'UCEWpbFLzoYGPfuWUMFPSaoA']
-KEYWORDS = 'momentum'  
 
 def channelid(ans):
     #to eliminate spaces between search queries with %20
@@ -63,7 +64,7 @@ def search_videos(api_key, channel_ids, keywords):
             'channelId': channel_id,
             'type': 'video',
             'q': keywords,
-            'maxResults': 5,  # You can adjust this number
+            'maxResults': 3,  # You can adjust this number
             'key': api_key
         }
         response = requests.get(base_url, params=params).json()
@@ -75,7 +76,8 @@ def search_videos(api_key, channel_ids, keywords):
     return videos
 
 
+for keyword in KEYWORDS:
+    found_videos = search_videos(API_KEY,channel_id_list , keyword)
+    for title, url in found_videos:
+        print(f'Video Title: {title}\nVideo URL: {url}\n')
 
-found_videos = search_videos(API_KEY,channel_id_list , KEYWORDS)
-for title, url in found_videos:
-    print(f'Video Title: {title}\nVideo URL: {url}\n')

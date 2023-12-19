@@ -18,10 +18,10 @@ def extract_data(text):
                 "properties":{
                     "Topics":{
                         "type":"string",
-                        "description": "topic of syllabus",},
+                        "description": "name of topic",},
                     "content":{
                         "type":"string",
-                        "description": "in point form, what is required",
+                        "description": "subtopics of topic.",
                     },
                 
                     }
@@ -46,5 +46,6 @@ def extract_data(text):
         function_name = function_call.name
         function_arguments = function_call.arguments
         print(function_arguments)
+        return(function_arguments)
     
     
