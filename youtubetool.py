@@ -3,38 +3,24 @@ import os
 from urllib.request import urlopen
 import json
 from dotenv import load_dotenv
+import requests
 
 
 #provide API key here
 load_dotenv()
-key=os.getenv("youtube_api_key")
+YOUTUBE_API_KEY = os.getenv("youtube_api_key")
 
-# Replace with your actual API key, channel IDs, and keywords
 
 channel_id_list = ['UCX6b17PVsYBQ0ip5gyeme-Q', 'UCEWpbFLzoYGPfuWUMFPSaoA']
 channel_name_list = ['CrashCourse', 'The Organic Chemistry Tutor']
-KEYWORDS = ['Energy and Momentum Conservation Principle', 'system of objects', 'velocities', 'interaction', 'Momentum Conservation Principle', 'system undergoing recoil', '1D problems', 'bodies collide', 'elastic collision', 'super-elastic collision', 'inelastic collision', 'completely inelastic collision']  
+KEYWORDS = ['Momentum Conservation Principle', 'system undergoing recoil', 'elastic collision']  
 
-
-# keep_adding = True
-# while keep_adding:
-#     ans1=str(input('Input Username : ' )).split()
-#     channel_id,name=channelid(ans1)
-#     channel_id_list.append(channel_id)
-#     channel_name_list.append(name)
-#     resume = input("keep adding? y/n")
-#     if resume == "n":
-#         keep_adding = False
-resource_dictionary = dict(zip(channel_name_list,channel_id_list))
-
-
-API_KEY = os.getenv("youtube_api_key")
 
 def channelid(ans):
     #to eliminate spaces between search queries with %20
     str1='%20'.join([str(ele) for ele in ans])
     #Use yt API to give search results for username
-    site1=urlopen('https://www.googleapis.com/youtube/v3/search?part=snippet&q='+str1 +'&type=channel&key='+API_KEY)
+    site1=urlopen('https://www.googleapis.com/youtube/v3/search?part=snippet&q='+str1 +'&type=channel&key='+YOUTUBE_API_KEY)
     #loads data to a json file format
     a1 = json.load(site1)
     #to get channelid and channelname using username
@@ -42,16 +28,27 @@ def channelid(ans):
     channelname=a1.get("items")[0].get("snippet").get('title')
     #returns channelid & channelname
     return(ucid,channelname)
-    
-    
-def returnurl(ucid):
-    #creates and returns url for statistics usin channelid
-    u='https://www.googleapis.com/youtube/v3/channels?id='+ucid+'&key='+API_KEY+'&part=statistics'
-    return(u)
 
 
+def create_channel_id_list():
+    """creates a list of youtube channel IDs given an input of channel names"""
+    keep_adding = True
+    channel_id_list = []
+    while keep_adding:
+        ans1=str(input('Input Username : ' )).split()
+        channel_id,name=channelid(ans1)
+        channel_id_list.append(channel_id)
+        channel_name_list.append(name)
+        resume = input("keep adding? y/n")
+        if resume == "n":
+            keep_adding = False
+    return channel_id_list
 
-import requests
+
+# def returnurl(ucid):
+#     #creates and returns url for statistics usin channelid
+#     u='https://www.googleapis.com/youtube/v3/channels?id='+ucid+'&key='+API_KEY+'&part=statistics'
+#     return(u)
 
 def search_videos(api_key, channel_ids, keywords):
     """Search for videos in specific channels with keywords."""
@@ -64,7 +61,7 @@ def search_videos(api_key, channel_ids, keywords):
             'channelId': channel_id,
             'type': 'video',
             'q': keywords,
-            'maxResults': 3,  # You can adjust this number
+            'maxResults': 1,  # You can adjust this number
             'key': api_key
         }
         response = requests.get(base_url, params=params).json()
@@ -76,8 +73,20 @@ def search_videos(api_key, channel_ids, keywords):
     return videos
 
 
-for keyword in KEYWORDS:
-    found_videos = search_videos(API_KEY,channel_id_list , keyword)
-    for title, url in found_videos:
-        print(f'Video Title: {title}\nVideo URL: {url}\n')
+def retrieve_videos():
+    """main fucntion of this module to be called. it will return a nested dictionary, ie {keyword:{video_title:url,..}, keyword...}"""
+    video_library = {}
+    for keyword in KEYWORDS:
+        found_videos = search_videos(YOUTUBE_API_KEY,channel_id_list , keyword)
+        video_library[keyword] = {title:url for title, url in found_videos}
+    return video_library
+
+
+
+# {'Momentum Conservation Principle': {'The Law of Conservation: Crash Course Engineering #7': 'https://www.youtube.com/watch?v=VxCORJ8dN3Y',
+#                                       'Conservation of Momentum Physics Problems - Basic Introduction': 'https://www.youtube.com/watch?v=Fp7D5D8Bqjc'},
+#  'system undergoing recoil': {'Elastic Collisions In One Dimension Physics Problems - Conservation of Momentum &amp; Kinetic Energy': 'https://www.youtube.com/watch?v=CFbo_nBdBco'},
+#  'elastic collision': {'Collisions: Crash Course Physics #10': 'https://www.youtube.com/watch?v=Y-QOfc2XqOk',
+#                         'Elastic Collisions In One Dimension Physics Problems - Conservation of Momentum &amp; Kinetic Energy': 'https://www.youtube.com/watch?v=CFbo_nBdBco'}
+#  }
 
